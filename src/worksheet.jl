@@ -326,13 +326,17 @@ function Base.summary(io::IO, jws::JSONWorksheet)
         basename(xlsxpath(jws)), sheetnames(jws))
 end
 function Base.show(io::IO, jws::JSONWorksheet)
-    summary(io, jws)
-    # TODO truncate based on screen size
-    print(io, "row 1 => ")
-    print(io, JSON3.pretty(jws[1]))
-    if length(jws) > 1
-        print("...")
-        print(io, "row $(length(jws)) => ")
-        print(io, JSON3.write(jws[end]))
+    # By default, we align the columns to the left unless they are numbers, checks first row to determine datatype
+    alignment = fill(:l, size(jws, 2))
+    
+    for i in 1:size(jws, 2)
+        if isa(jws[1, i], Number)
+            alignment[i] = :r
+        end
     end
+        
+    summary(io, jws)
+    pretty_table(io, Tables.matrix(jws);
+        header = pointer_to_colname.(Tables.columnnames(jws)), 
+        alignment = alignment)
 end

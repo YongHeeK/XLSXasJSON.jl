@@ -5,6 +5,7 @@ using JSON3, StructTypes
 using JSONPointer
 using JSONPointer: Pointer
 using Tables
+using PrettyTables
 using XLSX
 using OrderedCollections
 
